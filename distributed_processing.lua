@@ -14,11 +14,11 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
     end)
 
     function machines.isOccupied(name)
-        return machines.occupied(name) ~= nil
+        return machines.occupied[name] ~= nil
     end
 
     function machines.isFree(name)
-        return machines.free(name) ~= nil
+        return machines.free[name] ~= nil
     end
 
     function machines.setOccupied(name)
