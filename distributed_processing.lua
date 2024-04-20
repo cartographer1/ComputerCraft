@@ -4,6 +4,24 @@ local moveFluid = inventory_util.moveFluid
 
 local function setup(srcName, destName, machineName, processFluid, itemOutputSlots, fluidOutputSlots)
     
+    local function isEmpty(name)
+        local inv = peripheral.wrap(name)
+        local no_items = next(inv.list()) == nil
+        local no_fluid = true
+        if processFluid then
+            no_fluid = next(inv.tanks()) == nil
+        end
+    
+        return no_items and no_fluid
+    end
+
+    local function transferAll(nameFrom, nameTo, fromSlots, fromSlotsFluid, pullMode)
+        moveItems({srcName=nameFrom, destName=nameTo, fromSlots=fromSlots, pullMode=pullMode})
+        if processFluid then
+            moveFluid({srcName=nameFrom, destName=nameTo, slotsOrFluidNames=fromSlotsFluid, pullMode=pullMode})
+        end
+    end
+
     local machines = {
         occupied = {},
         free = {},
@@ -11,6 +29,7 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
 
     peripheral.find(machineName, function (name, _)
         machines.free[name] = true
+        transferAll(name, destName, itemOutputSlots, fluidOutputSlots)
     end)
 
     function machines.isOccupied(name)
@@ -41,24 +60,6 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
 
     function machines.getFree()
         return pairs(machines.free)
-    end
-    
-    local function isEmpty(name)
-        local inv = peripheral.wrap(name)
-        local no_items = next(inv.list()) == nil
-        local no_fluid = true
-        if processFluid then
-            no_fluid = next(inv.tanks()) == nil
-        end
-    
-        return no_items and no_fluid
-    end
-
-    local function transferAll(nameFrom, nameTo, fromSlots, fromSlotsFluid, pullMode)
-        moveItems({srcName=nameFrom, destName=nameTo, fromSlots=fromSlots, pullMode=pullMode})
-        if processFluid then
-            moveFluid({srcName=nameFrom, destName=nameTo, slotsOrFluidNames=fromSlotsFluid, pullMode=pullMode})
-        end
     end
     
     local function collectOutput()
