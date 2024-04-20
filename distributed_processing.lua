@@ -1,3 +1,5 @@
+-- http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/distributed_processing.lua
+
 local function update(name, url)
     shell.run(string.format("rm %s.lua", name))
     local result = shell.run(string.format("wget %s", url))

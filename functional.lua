@@ -1,4 +1,5 @@
 -- functional programming with lua iterators
+-- http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/functional.lua
 
 local function map(mapf, f, c, v)
     local args, res, idx
@@ -18,6 +19,14 @@ local function map(mapf, f, c, v)
     end
 end
 
+local function unroll(f, c, v)
+    v = f(c, v)
+    if v ~= nil then
+        return v, unroll(f, c, v)
+    end
+end
+
 return {
     map=map,
+    unroll=unroll,
 }

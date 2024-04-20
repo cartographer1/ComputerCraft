@@ -1,3 +1,5 @@
+-- http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/inventory_util.lua
+
 local expect_mod = require "cc.expect"
 local expect, field = expect_mod.expect, expect_mod.field
 
