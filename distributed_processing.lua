@@ -12,7 +12,11 @@ local inventory_util = require "inventory_util"
 local moveItems = inventory_util.moveItems
 local moveFluid = inventory_util.moveFluid
 
-local function setup(srcName, destName, machineName, processFluid, itemOutputSlots, fluidOutputSlots)
+local function setup(srcName, destName, machineName, processFluid, itemOutputSlots, fluidOutputSlots, multiplexing)
+
+    if not multiplexing then
+        multiplexing = 1
+    end
 
     local function dbg(...)
         if DEBUG then
@@ -41,10 +45,12 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
     local machines = {
         occupied = {},
         free = {},
+        counter = {}
     }
 
     peripheral.find(machineName, function (name, _)
         machines.free[name] = true
+        machines.counter[name] = 0
         transferAll(name, destName, itemOutputSlots, fluidOutputSlots)
     end)
 
@@ -57,8 +63,12 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
     end
 
     function machines.setOccupied(name)
-        machines.free[name] = nil
-        machines.occupied[name] = true
+        machines.counter[name] = machines.counter[name] + 1
+
+        if machines.counter[name] == multiplexing then
+            machines.free[name] = nil
+            machines.occupied[name] = true
+        end
 
         dbg(string.format("%s Occupied", name))
     end
@@ -66,6 +76,7 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
     function machines.setFree(name)
         machines.occupied[name] = nil
         machines.free[name] = true
+        machines.counter[name] =  0
 
         dbg(string.format("%s Freed", name))
     end
