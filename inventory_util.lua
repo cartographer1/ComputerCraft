@@ -1,8 +1,5 @@
 -- http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/inventory_util.lua
 
-local expect_mod = require "cc.expect"
-local expect, field = expect_mod.expect, expect_mod.field
-
 local function update(name, url)
     shell.run(string.format("rm %s.lua", name))
     local result = shell.run(string.format("wget %s", url))
@@ -10,6 +7,9 @@ local function update(name, url)
 end
 
 update("functional", "http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/functional.lua")
+
+local expect_mod = require "cc.expect"
+local expect, field = expect_mod.expect, expect_mod.field
 
 local functional = require("functional")
 local map = functional.map
