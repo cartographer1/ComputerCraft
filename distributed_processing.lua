@@ -6,8 +6,6 @@ local function update(name, url)
     assert(result, "Download Failed!")
 end
 
-
-
 update("inventory_util", "http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/inventory_util.lua")
 
 local inventory_util = require "inventory_util"

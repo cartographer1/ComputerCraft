@@ -3,17 +3,16 @@
 local expect_mod = require "cc.expect"
 local expect, field = expect_mod.expect, expect_mod.field
 
-
-local function map(transformer, f, c, v)
-    return function()
-        local args = { f(c, v) }
-        v = table.unpack(args)
-        if v ~= nil then
-            return transformer(table.unpack(args))
-        end
-    end
+local function update(name, url)
+    shell.run(string.format("rm %s.lua", name))
+    local result = shell.run(string.format("wget %s", url))
+    assert(result, "Download Failed!")
 end
 
+update("functional", "http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/functional.lua")
+
+local functional = require("functional")
+local map = functional.map
 
 local function moveItems(options)
     local function _moveItems(srcName, destName, fromSlots, limit, toSlot, pullMode)
