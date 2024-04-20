@@ -64,10 +64,10 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
 
     function machines.setOccupied(name)
         machines.counter[name] = machines.counter[name] + 1
+        machines.occupied[name] = true
 
         if machines.counter[name] == multiplexing then
             machines.free[name] = nil
-            machines.occupied[name] = true
         end
 
         dbg(string.format("%s Occupied", name))
