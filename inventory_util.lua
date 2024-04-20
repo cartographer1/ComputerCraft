@@ -1,3 +1,6 @@
+local expect_mod = require "cc.expect"
+local expect, field = expect_mod.expect, expect_mod.field
+
 
 local function map(transformer, f, c, v)
     return function()
@@ -40,12 +43,12 @@ local function moveItems(options)
         end
     end
 
-    assert(type(options.srcName) == "string")
-    assert(type(options.destName) == "string")
-    assert(type(options.fromSlots) == "nil" or type(options.fromSlots) == "number" or type(options.fromSlots) == "table")
-    assert(type(options.limit) == "nil" or type(options.limit) == "number")
-    assert(type(options.toSlot) == "nil" or type(options.toSlot) == "number")
-    assert(type(options.pullMode) == "nil" or type(options.pullMode) == "boolean")
+    field(options, "srcName", "string")
+    field(options, "destName", "string")
+    field(options, "fromSlots", "number", "table", "function", "nil")
+    field(options, "limit", "number", "nil")
+    field(options, "toSlot", "number", "nil")
+    field(options, "pullMode", "boolean", "nil")
 
     _moveItems(options.srcName, options.destName, options.fromSlots, options.limit, options.toSlot, options.pullMode)
 end
@@ -87,12 +90,11 @@ local function moveFluid(options)
         end
     end
 
-    assert(type(options.srcName) == "string")
-    assert(type(options.destName) == "string")
-    local typeOfSlotOrFluidName = type(options.slotsOrFluidNames)
-    assert(typeOfSlotOrFluidName == "number" or typeOfSlotOrFluidName == "string" or typeOfSlotOrFluidName == "nil" or typeOfSlotOrFluidName == "table")
-    assert(type(options.limit) == "nil" or type(options.limit) == "number")
-    assert(type(options.pullMode) == "nil" or type(options.pullMode) == "boolean")
+    field(options, "srcName", "string")
+    field(options, "destName", "string")
+    field(options, "slotsOrFluidNames", "string", "number", "table", "function", "nil")
+    field(options, "limit", "number", "nil")
+    field(options, "pullMode", "boolean", "nil")
     
     _moveFluid(options.srcName, options.destName, options.slotsOrFluidNames, options.limit, options.pullMode)
 end
