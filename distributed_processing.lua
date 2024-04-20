@@ -1,8 +1,9 @@
 local function update(name, url)
     shell.run(string.format("rm %s.lua", name))
-    local result = shell.run(string.format("wget %s"), url)
+    local result = shell.run(string.format("wget %s", url))
     assert(result, "Download Failed!")
 end
+
 
 
 update("inventory_util", "http://raw.githubusercontent.com/cartographer1/ComputerCraft/main/inventory_util.lua")
