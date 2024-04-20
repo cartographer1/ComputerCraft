@@ -13,6 +13,12 @@ local moveItems = inventory_util.moveItems
 local moveFluid = inventory_util.moveFluid
 
 local function setup(srcName, destName, machineName, processFluid, itemOutputSlots, fluidOutputSlots)
+
+    local function dbg(...)
+        if DEBUG then
+            print(...)
+        end
+    end
     
     local function isEmpty(name)
         local inv = peripheral.wrap(name)
@@ -54,14 +60,14 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
         machines.free[name] = nil
         machines.occupied[name] = true
 
-        print(string.format("%s Occupied", name))
+        dbg(string.format("%s Occupied", name))
     end
 
     function machines.setFree(name)
         machines.occupied[name] = nil
         machines.free[name] = true
 
-        print(string.format("%s Freed", name))
+        dbg(string.format("%s Freed", name))
     end
 
     function machines.getOccupied()
@@ -76,10 +82,10 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
         while true do
             for name in machines.getOccupied() do
                 transferAll(name, destName, itemOutputSlots, fluidOutputSlots)
-                print(string.format("Trying to extract from %s", name))
+                dbg(string.format("Trying to extract from %s", name))
                 if isEmpty(name) then
                     machines.setFree(name)
-                    print("Success")
+                    dbg("Success")
                 end
             end
 
@@ -96,7 +102,7 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
                 end
                 transferAll(srcName, name, nil, nil, true)
                 machines.setOccupied(name)
-                print(string.format("Tranferred ingredients to %s", name))
+                dbg(string.format("Tranferred ingredients to %s", name))
             end
             
             sleep(0.25)
