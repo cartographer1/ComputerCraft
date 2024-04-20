@@ -1,3 +1,10 @@
+local function update(name, url)
+    shell.run(string.format("rm %s", name))
+    shell.run(string.format("wget %s"), url)
+end
+
+update("inventory_util", "https://raw.githubusercontent.com/cartographer1/ComputerCraft/main/inventory_util.lua")
+
 local inventory_util = require "inventory_util"
 local moveItems = inventory_util.moveItems
 local moveFluid = inventory_util.moveFluid
