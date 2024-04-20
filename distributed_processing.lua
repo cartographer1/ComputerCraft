@@ -1,5 +1,5 @@
 local function update(name, url)
-    shell.run(string.format("rm %s", name))
+    shell.run(string.format("rm %s.lua", name))
     shell.run(string.format("wget %s"), url)
 end
 
