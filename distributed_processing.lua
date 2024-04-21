@@ -74,8 +74,10 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
             ignored_slots[slot] = true
         end
 
-        for _, fluid in pairs(inv.tanks()) do
-            ignored_fluid[fluid.name] = true
+        if processFluid then
+            for _, fluid in pairs(inv.tanks()) do
+                ignored_fluid[fluid.name] = true
+            end
         end
     end)
 
