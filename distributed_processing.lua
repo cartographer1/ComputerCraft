@@ -36,7 +36,7 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
             if not ignored_slots[slot] then
                 return item.name
             end
-        end, inv.list())
+        end, pairs(inv.list()))
         local no_items = items() == nil
 
         local no_fluid = true
@@ -45,7 +45,7 @@ local function setup(srcName, destName, machineName, processFluid, itemOutputSlo
                 if not ignored_fluid[fluid.name] then
                     return fluid.name
                 end
-            end, inv.tanks())
+            end, pairs(inv.tanks()))
             no_fluid = fluids() == nil
         end
 
