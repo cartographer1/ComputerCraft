@@ -15,7 +15,7 @@ local functional = require("functional")
 local map = functional.map
 
 local function moveItems(options)
-    local function _moveItems(srcName, destName, fromSlots, limit, toSlot, pullMode)
+    local function _moveItems(srcName, destName, fromSlots, slotFilter, itemFilter, limit, toSlot, pullMode)
         local src = peripheral.wrap(srcName)
         local dest = peripheral.wrap(destName)
 
@@ -25,11 +25,27 @@ local function moveItems(options)
 
         local function getSlots()
             if type(fromSlots) == "table" then
-                return map(function (index, slot)
+                return map(function (_, slot)
+                    if slotFilter and not slotFilter(slot) then
+                        return
+                    end
+                    local name = src.list()[slot]
+                    if itemFilter and not itemFilter(name) then
+                        return
+                    end
+
                     return slot
                 end, ipairs(fromSlots))
             else -- type(fromSlots) == nil
                 return map(function (slot, item)
+                    if slotFilter and not slotFilter(slot) then
+                        return
+                    end
+                    local name = item.name
+                    if itemFilter and not itemFilter(name) then
+                        return
+                    end
+
                     return slot
                 end, pairs(src.list()))
             end
@@ -46,16 +62,18 @@ local function moveItems(options)
 
     field(options, "srcName", "string")
     field(options, "destName", "string")
-    field(options, "fromSlots", "number", "table", "function", "nil")
+    field(options, "fromSlots", "number", "table", "nil")
+    field(options, "slotFilter", "function", "nil")
+    field(options, "itemFilter", "function", "nil")
     field(options, "limit", "number", "nil")
     field(options, "toSlot", "number", "nil")
     field(options, "pullMode", "boolean", "nil")
 
-    _moveItems(options.srcName, options.destName, options.fromSlots, options.limit, options.toSlot, options.pullMode)
+    _moveItems(options.srcName, options.destName, options.fromSlots, options.slotFilter, options.itemFilter, options.limit, options.toSlot, options.pullMode)
 end
 
 local function moveFluid(options)
-    local function _moveFluid(srcName, destName, slotOrFluidNames, limit, pullMode)
+    local function _moveFluid(srcName, destName, slotOrFluidNames, filter, limit, pullMode)
         local src = peripheral.wrap(srcName)
         local dest = peripheral.wrap(destName)
 
@@ -66,17 +84,26 @@ local function moveFluid(options)
         local function getFluidNames()
             if type(slotOrFluidNames) == "table" then
                 return map(function (index, slotOrFluidName)
+                    local fluidName
                     if type(slotOrFluidName) == "string" then
-                        return slotOrFluidName
+                        fluidName = slotOrFluidName
                     elseif type(slotOrFluidName) == "number" then
                         local fluid = src.tanks()[slotOrFluidName]
                         if fluid ~= nil then
-                            return fluid.name
+                            fluidName = fluid.name
                         end
                     end
+
+                    if filter and not filter(fluidName) then
+                        return
+                    end
+                    return fluidName
                 end, ipairs(slotOrFluidNames))
             else -- nil
                 return map(function (slot, fluid)
+                    if filter and not filter(fluid.name) then
+                        return
+                    end
                     return fluid.name
                 end, pairs(src.tanks()))
             end
@@ -93,11 +120,12 @@ local function moveFluid(options)
 
     field(options, "srcName", "string")
     field(options, "destName", "string")
-    field(options, "slotsOrFluidNames", "string", "number", "table", "function", "nil")
+    field(options, "slotsOrFluidNames", "string", "number", "table", "nil")
+    field(options, "filter", "function", "nil")
     field(options, "limit", "number", "nil")
     field(options, "pullMode", "boolean", "nil")
     
-    _moveFluid(options.srcName, options.destName, options.slotsOrFluidNames, options.limit, options.pullMode)
+    _moveFluid(options.srcName, options.destName, options.slotsOrFluidNames, options.filter, options.limit, options.pullMode)
 end
 
 return {
